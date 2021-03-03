@@ -1,0 +1,18 @@
+{% extends "em/base.html" %}
+
+{% block content %}
+<div class="uk-card uk-card-default uk-card-small">
+  <div class="uk-card-body">
+    <p class="uk-card-title1 uk-alert-danger" uk-alert>
+      確定要刪除維護廠商 <span class="uk-label">{{ si.name }}</span> 嗎？
+    </p>
+  </div>
+  <div class="uk-card-footer">
+    <form action="" method="post">
+      {% csrf_token %}
+      <input type="submit" class="uk-button uk-button-danger" value="確認刪除">
+      <input type="button" class="uk-button uk-button-default" value="取消" onclick="javascript:window.history.back();">
+    </form>
+  </div>
+</div>
+{% endblock %}

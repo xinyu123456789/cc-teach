@@ -1,0 +1,18 @@
+{% extends "em/base.html" %}
+
+{% block content %}
+<div class="uk-card uk-card-default uk-card-small">
+  <div class="uk-card-body">
+    <p class="uk-card-title">
+      確定要刪除使用者 <span class="uk-label">{{ log.user.name }}</span> 借用設備 <span class="uk-label">{{ log.equip.name }}</span> 的紀錄嗎？
+    </p>
+  </div>
+  <div class="uk-card-footer">
+    <form action="" method="post">
+      {% csrf_token %}
+      <input type="submit" class="uk-button uk-button-danger" value="確認刪除">
+      <input type="button" class="uk-button uk-button-default" value="取消" onclick="javascript:window.history.back();">
+    </form>
+  </div>
+</div>
+{% endblock %}

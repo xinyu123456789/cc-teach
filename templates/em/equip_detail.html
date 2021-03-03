@@ -1,0 +1,58 @@
+{% extends "em/base.html" %}
+
+{% block content %}
+<div class="uk-flex">
+  <h1>{{ equip.name }}</h1>
+  <a href="{% url 'equip_edit' equip.id %}" class="uk-icon-button" uk-icon="file-edit" title="修改"></a>
+  {% if not equip.lend %}
+  <a href="{% url 'equip_log_create' equip.id %}" class="uk-icon-button" uk-icon="plus-circle" title="新增借用紀錄"></a>
+  {% endif %}
+</div>
+<div>
+  <a class="uk-label" href="{% url 'model_view' equip.model_id %}">型號：{{ equip.model.name }}</a>
+  <span class="uk-label uk-background-secondary">財產編號：{{ equip.prop_no }}</span>
+  {{ equip.render_status_label|safe }}
+</div>
+{% if equip.barcode %}
+<div><img src="https://barcode.tec-it.com/barcode.ashx?data={{ equip.barcode }}&code=Code128&multiplebarcodes=false&translate-esc=false&unit=Fit&dpi=96&imagetype=Gif&rotation=0&color=%23000000&bgcolor=%23ffffff&codepage=Default&qunit=Mm&quiet=0" alt=""></div>
+{% endif %}
+<div id="memo" class="uk-card uk-card-body">{{ equip.memo|default:""|safe }}</div>
+
+<ul uk-tab="animation: uk-animation-scale-up">
+  <li><a href="#">借用紀錄</a></li>
+</ul>
+
+<div>
+  <table class="uk-table uk-table-divider uk-table-striped uk-table-hover uk-table-small">
+    <thead class="uk-light uk-background-secondary">
+      <tr>
+        <th>借用人</th>
+        <th>借出日期</th>
+        <th>歸還日期</th>
+        <th></th>
+        <th>更新時間</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for log in equip.log_set.all %}
+      <tr>
+        <td>
+          <a href="{% url 'applicant_view' log.user.id %}">{{ log.user.name }}</a>
+        </td>
+        <td>{{ log.date_apply|date:"Y-m-d" }}</td>
+        <td>{{ log.date_return|date:"Y-m-d" }}</td>
+        <td>
+          <a href="{% url 'equip_log_edit' equip.id log.id %}" class="uk-icon-button" uk-icon="pencil" title="編輯"></a>
+          <a href="{% url 'equip_log_delete' equip.id log.id %}" class="uk-icon-button" uk-icon="trash" title="刪除"></a>
+          {% if not log.date_return %}
+            <a href="{% url 'equip_log_return' equip.id log.id %}" class="uk-icon-button" uk-icon="reply" title="快速歸還"></a>
+          {% endif %}
+        </td>
+        <td class="uk-comment-meta">{{ log.author }}@{{ log.modified|date:"Y-m-d H:i" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <div>共 {{ equip.log_set.count }} 筆紀錄</div>
+</div>
+{% endblock %}

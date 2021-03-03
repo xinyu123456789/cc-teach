@@ -1,0 +1,22 @@
+{% extends "em/base.html" %}
+
+{% block content %}
+<div class="uk-card uk-card-default uk-card-small">
+  <div class="uk-card-body">
+    <p class="uk-card-title">
+      確定要刪除設備 <span class="uk-label">{{ inventorylog.equip.name }}</span> 在 {{ inventorylog.date_checked.year }} 年的盤點紀錄嗎？
+    </p>
+    <ul class="uk-list">
+      <li>機型: {{ inventorylog.equip.model.name }}</li>
+      <li>財產編號: {{ inventorylog.equip.prop_no }}</li>
+    </ul>
+  </div>
+  <div class="uk-card-footer">
+    <form action="" method="post">
+      {% csrf_token %}
+      <input type="submit" class="uk-button uk-button-danger" value="確認刪除">
+      <input type="button" class="uk-button uk-button-default" value="取消" onclick="javascript:window.history.back();">
+    </form>
+  </div>
+</div>
+{% endblock %}

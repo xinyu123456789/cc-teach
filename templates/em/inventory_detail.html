@@ -1,0 +1,94 @@
+{% extends "em/base.html" %}
+
+{% block content %}
+<h1>{{ year }} 年設備盤點紀錄</h1>
+<div uk-filter="target: .js-filter">
+  <div class="uk-grid-small uk-grid-divider uk-child-width-auto uk-margin-bottom" uk-grid>
+    <div>
+      <ul class="uk-subnav uk-subnav-pill">
+        <li class="uk-active" uk-filter-control><a href="#">全部</a></li>
+        <li uk-filter-control="filter: [data-checked='0']; group: applicant-role"><a href="#">待盤</a></li>
+        <li uk-filter-control="filter: [data-checked='1']; group: applicant-role"><a href="#">已盤</a></li>
+      </ul>
+    </div>
+    <div>
+      <ul class="uk-subnav uk-subnav-pill">
+        <li uk-toggle="target: .f3; animation: uk-animation-fade; queued: true"><a href="#">財產性質</a></li>
+        <li uk-toggle="target: .f5; animation: uk-animation-fade; queued: true"><a href="#">購置日期</a></li>
+        <li uk-toggle="target: .f6; animation: uk-animation-fade; queued: true"><a href="#">單位</a></li>
+        <li uk-toggle="target: .f7; animation: uk-animation-fade; queued: true"><a href="#">數量</a></li>
+        <li uk-toggle="target: .f8; animation: uk-animation-fade; queued: true"><a href="#">帳面價值</a></li>
+        <li uk-toggle="target: .f9; animation: uk-animation-fade; queued: true"><a href="#">使用年限(月)</a></li>
+        <li uk-toggle="target: .f10; animation: uk-animation-fade; queued: true"><a href="#">保管單位</a></li>
+        <li uk-toggle="target: .f11; animation: uk-animation-fade; queued: true"><a href="#">使用單位</a></li>
+        <li uk-toggle="target: .f12; animation: uk-animation-fade; queued: true"><a href="#">存置地點</a></li>
+      </ul>
+    </div>
+  </div>
+  <div id="inventory-list">
+    <table class="uk-table uk-table-small uk-table-divider uk-text-small">
+      <thead class="uk-light uk-background-secondary">
+        <tr>
+          <th class="f1">財產編號<br>財產分號</th>
+          <th class="f2">財產名稱<br>財產別名</th>
+          <th class="f3">財產性質</th>
+          <th class="f4">廠牌/型式<br>設備編號</th>
+          <th class="f5">購置日期<br>移動日期</th>
+          <th class="f6">單位</th>
+          <th class="f7">數量</th>
+          <th class="f8">帳面價值</th>
+          <th class="f9">使用年限(月)<br>可報廢日期</th>
+          <th class="f10">保管單位<br>保管人</th>
+          <th class="f11">使用單位<br>使用人</th>
+          <th class="f12">存置地點<br>原登錄號</th>
+          <th class="f13">盤點結果</th>
+          <th>借用人<br>借出日期</th>
+        </tr>
+      </thead>
+      <tbody class="js-filter">
+        {% for prop, inv in inventory_list.items %}
+        <tr{% if inv.result %} style="background-color: lemonchiffon"{% endif %} data-checked="{% if inv.result %}1{% else %}0{% endif %}">
+          <td class="f1">{{ inv.財產編號 }}<br>{{ inv.財產分號 }}<br>第 {{ inv.盤點頁數 }} 頁</td>
+          <td class="f2">{{ inv.財產名稱 }}<br>{{ inv.財產別名 }}</td>
+          <td class="f3">{{ inv.財產性質 }}</td>
+          <td class="f4">
+            {{ inv.廠牌 }} / {{ inv.型式 }}<br>
+            {{ inv.equip.name }}
+          </td>
+          <td class="f5">{{ inv.購置日期 }}<br>{{ inv.移動日期 }}</td>
+          <td class="f6">{{ inv.單位 }}</td>
+          <td class="f7">{{ inv.主檔帳面數量 }}</td>
+          <td class="f8">{{ inv.帳面價值 }}</td>
+          <td class="f9">{{ inv.使用年限 }}<br>{{ inv.可報廢日期 }}</td>
+          <td class="f10">{{ inv.保管單位 }}<br>{{ inv.保管人 }}</td>
+          <td class="f11">{{ inv.使用單位 }}<br>{{ inv.使用人 }}</td>
+          <td class="f12">{{ inv.存置地點 }}<br>{{ inv.原登錄號 }}</td>
+          <td class="f13 uk-visible-toggle">
+            {% if inv.result %}            
+              {{ inv.result.date_checked|date:"Ymd" }}<br>{{ inv.result.author.first_name }}<br>
+              <a href="{% url 'inventory_log_delete' inv.result.date_checked.year inv.result.id %}" class="uk-button uk-button-small uk-button-danger uk-hidden-hover">刪除</a>
+            {% else %}
+              <a href="{% url 'inventory_log_manual_create' inv.equip.id %}" class="uk-button uk-button-small uk-button-primary uk-hidden-hover">新增</a>              
+            {% endif %}
+          </td>
+          <td>
+            {% if inv.equip.applicant %}{{ inv.equip.applicant }}<br>{{ inv.equip.date_apply|date:"Y-m-d" }}{% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+{% block footer_scripts %}
+<script>
+  UIkit.util.on('[uk-filter]', 'beforeFilter', function(state) {
+    document.querySelector('.js-filter').style.visibility = "hidden";
+  });
+  UIkit.util.on('[uk-filter]', 'afterFilter', function(state) {
+    document.querySelector('.js-filter').style.visibility = "visible";
+  });
+</script>
+{% endblock %}

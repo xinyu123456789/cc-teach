@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!--Import Google Icon Font-->
+  <link rel="stylesheet" href="{{ STATIC_URL }}/uikit/css/uikit.min.css">
+  <title>{% if page_title %}{{ page_title }} | {% endif %}大直高中資訊組</title>
+</head>
+
+<body>
+  <!--HEADER-->
+  <header class="uk-box-shadow-small uk-light uk-background-primary">
+    <div class="uk-container">
+      <nav class="uk-navbar" id="navbar" data-uk-navbar uk-grid>
+        <div class="uk-navbar-left">
+          <a class="uk-navbar-item uk-logo" href="/">大直高中資訊組 <span uk-icon="home"></span></a>
+        </div>
+        <div class="uk-navbar-right">
+          <ul id="main-menu" class="uk-navbar-nav uk-visible@m" uk-grid>
+            {% if not user.is_authenticated %}
+            <li><a href="{% url 'login' %}"><span uk-icon="sign-in"></span> 登入</a></li>
+            {% else %}
+            <li><a href="{% url 'si_list' %}"><span uk-icon="receiver"></span> 廠商叫修電話</a></li>
+            <li>
+              <a href="{% url 'model_list' %}"><span uk-icon="laptop"></span> 設備管理</a>
+              <div class="uk-navbar-dropdown">
+                <ul class="uk-nav uk-navbar-dropdown-nav">
+                  <li><a href="{% url 'model_list' %}">機型</a></li>
+                  <li><a href="{% url 'applicant_list' %}">借用人</a></li>
+                </ul>
+              </div>
+            </li>
+            <li>
+              <a href=""><span uk-icon="user"></span> {{ user.username }}</a>
+              <div class="uk-navbar-dropdown">
+                <ul class="uk-nav uk-navbar-dropdown-nav">
+                  <li><a href="{% url 'password_change' %}"><span uk-icon="lock"></span> 變更密碼</a></li>
+                  {% if user.is_staff %}
+                    <li><a href="/admin/"><span uk-icon="cog"></span> 後臺</a></li>
+                  {% endif %}
+                  <li><a href="{% url 'logout' %}"><span uk-icon="sign-out"></span> 登出</a></li>
+                </ul>
+              </div>
+            </li>
+            {% endif %}
+          </ul>
+          <a uk-navbar-toggle-icon="" href="#main-menu" uk-toggle="cls: uk-visible@m" class="uk-navbar-toggle uk-hidden@m uk-icon uk-navbar-toggle-icon" aria-expanded="false">
+            {% comment %} <svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><rect y="9" width="20" height="2"></rect><rect y="3" width="20" height="2"></rect><rect y="15" width="20" height="2"></rect></svg> {% endcomment %}
+          </a>
+        </div>
+      </nav>
+    </div>
+  </header>
+  <!--/HEADER-->
+  <div class="uk-container">
+    {% if alerts %}
+    <section id="alerts" class="uk-section uk-padding-small">
+      {% for alert in alerts %}
+      <div class="{{ alert.atype }} uk-margin-small" uk-alert>{{ alert.msg|linebreaks|safe }}</div>
+      {% endfor %}
+    </section>
+    {% endif %}
+    {% if messages %}
+    <section id="messages" class="uk-section uk-padding-small">
+      {% for msg in messages %}
+      <div class="{% if msg.tags %}uk-alert-{{ msg.tags}}{% endif %}" uk-alert>{{ msg|safe }}</div>
+      {% endfor %}
+    </section>
+    {% endif %}
+    <section id="main-content" class="uk-section uk-section-default uk-padding-small">
+      <div>
+        {% if page_title %}<h1>{{ page_title }}</h1>{% endif %}
+        {% block navext %}{% endblock %}
+        {% block main %}
+          {% if not user.is_authenticated %}
+            <p class="uk-alert-danger" uk-alert>此為資訊組內部使用，請先登入。</p>
+          {% else %}
+            <div class="uk-alert-primary" uk-alert>
+              <p>{{ user.first_name }} 歡迎你！</p>
+              <p>請由選單選擇欲操作的功能。</p>
+            </div>
+          {% endif %}
+        {% endblock %}
+      </div>
+    </section>
+  </div>
+  <!--FOOTER-->
+  <footer class="uk-section-secondary">
+    <div class="uk-section uk-section-xsmall" style="background-color: rgba(0,0,0,0.15)">
+      <div class="uk-container">
+        <div class="uk-grid uk-child-width-1-2@s uk-text-center uk-text-left@s" data-uk-grid>
+          <div class="uk-text-small uk-text-muted">
+            Copyright 2020 大直高中資訊組 - All rights reserved.
+          </div>
+          <div class="uk-text-small uk-text-muted uk-text-center uk-text-right@s">
+            <a href="https://github.com/zzseba78/Kick-Off">Created by KickOff</a> | Built with <a
+              href="http://getuikit.com" title="Visit UIkit 3 site" target="_blank" data-uk-tooltip><span
+                data-uk-icon="uikit"></span></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <!--/FOOTER-->
+  <script src="{{ STATIC_URL }}/uikit/js/uikit.min.js"></script>
+  <script src="{{ STATIC_URL }}/uikit/js/uikit-icons.min.js"></script>
+  {% block footer_scripts %}{% endblock %}
+</body>
+</html>

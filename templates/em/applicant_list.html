@@ -1,0 +1,69 @@
+{% extends "em/base.html" %}
+
+{% block content %}
+<div class="uk-flex">
+  <h1>借用人列表</h1>
+  <a href="{% url 'applicant_create' %}" class="uk-icon-button" uk-icon="plus-circle" title="新增借用人"></a>
+</div>
+<div uk-filter="target: .js-filter">
+  <div class="uk-grid-small uk-grid-divider uk-child-width-auto" uk-grid>
+    <div>
+      <ul class="uk-subnav uk-subnav-pill">
+        <li uk-filter-control="filter: [data-role='0']; group: applicant-role" class="uk-active"><a href="#">行政人員</a></li>
+        <li uk-filter-control="filter: [data-role='1']; group: applicant-role"><a href="#">高中部教師</a></li>
+        <li uk-filter-control="filter: [data-role='2']; group: applicant-role"><a href="#">國中部教師</a></li>
+      </ul>
+    </div>
+    <div>
+      <ul class="uk-subnav uk-subnav-pill">
+        <li uk-filter-control="filter: [data-status='0']; group: applicant-status" class="uk-active"><a href="#">在職</a></li>
+        <li uk-filter-control="filter: [data-status='1']; group: applicant-status"><a href="#">已離職</a></li>
+        <li uk-filter-control="filter: [data-status='2']; group: applicant-status"><a href="#">留職停薪</a></li>
+      </ul>
+    </div>
+  </div>
+  <table class="uk-table uk-table-divider uk-table-small uk-table-hover">
+    <thead>
+        <tr>
+          <th>姓名</th>
+          <th>身分</th>
+          <th>狀態</th>
+          <th>聯絡電話</th>
+          <th>電子郵件</th>
+        </tr>
+    </thead>
+    <tbody class="js-filter">
+      {% for applicant in applicant_list %}
+      <tr data-role="{{ applicant.role }}" data-status="{{ applicant.status }}">
+        <td>
+          <a href="{% url 'applicant_view' applicant.id %}">{{ applicant.name }}</a>
+        </td>
+        <td>
+          <span class="uk-label">{{ applicant.get_role_display }}</span>
+        </td>
+        <td>
+          <span class="uk-label{% if applicant.status %} uk-label-danger{% endif %}">{{ applicant.get_status_display}}</span>
+        </td>
+        <td>
+          {{ applicant.phone }}
+        </td>
+        <td>
+          {{ applicant.email }}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
+
+{% block footer_scripts %}
+<script>
+  UIkit.util.on('[uk-filter]', 'beforeFilter', function(state) {
+    document.querySelector('.js-filter').style.visibility = "hidden";
+  });
+  UIkit.util.on('[uk-filter]', 'afterFilter', function(state) {
+    document.querySelector('.js-filter').style.visibility = "visible";
+  });
+</script>
+{% endblock %}

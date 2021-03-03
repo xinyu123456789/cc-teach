@@ -1,0 +1,43 @@
+{% extends "em/base.html" %}
+
+{% block content %}
+<div class="uk-flex">
+  <h1>維護廠商列表</h1>
+  <a href="{% url 'si_create' %}" class="uk-icon-button" uk-icon="plus-circle" title="新增廠商"></a>
+</div>
+<div>
+  <table class="uk-table uk-table-divider uk-table-striped uk-table-hover uk-table-small">
+    <thead class="uk-light uk-background-secondary">
+      <tr>
+        <th>維護廠商</th>
+        <th>聯絡電話</th>
+        <th>維護項目</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for si in si_list %}
+      <tr>
+        <td>{{ si.name }}</td>
+        <td>
+          {{ si.phone }}
+        </td>
+        <td>
+          {{ si.memo|linebreaks }}
+          {% if si.model_set.all %}
+            {% for m in si.model_set.all %}
+            <a href="{% url 'model_view' m.id %}" class="uk-label uk-link">{{ m.name }}</a>
+            {% endfor %}
+          {% endif %}
+        </td>
+        <td>
+          <a href="{% url 'si_edit' si.id %}" class="uk-icon-button" uk-icon="pencil" title="編輯"></a>
+          <a href="{% url 'si_delete' si.id %}" class="uk-icon-button" uk-icon="trash" title="刪除"></a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <div>共 {{ si_list.count }} 筆紀錄</div>
+</div>
+{% endblock %}

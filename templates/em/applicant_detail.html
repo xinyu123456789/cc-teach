@@ -1,0 +1,101 @@
+{% extends "em/base.html" %}
+
+{% block content %}
+<div class="uk-flex">
+  <h1>{{ applicant.name }}</h1>
+  <a href="{% url 'applicant_edit' applicant.id %}" class="uk-icon-button" uk-icon="file-edit" title="修改"></a>
+  <a href="{% url 'applicant_log_create' applicant.id %}" class="uk-icon-button" uk-icon="plus-circle" title="新增借用紀錄"></a>
+</div>
+<div>
+  <span class="uk-label">{{ applicant.get_role_display }}</span>
+  <span class="uk-label{% if applicant.status %} uk-label-danger{% endif %}">{{ applicant.get_status_display }}</span>
+</div>
+<div id="detail" class="uk-flex uk-margin-top">
+  <div class="uk-card uk-card-small uk-card-default">
+    <div class="uk-card-header">聯絡電話</div>
+    <div class="uk-card-body">
+      <ul class="uk-list">
+        {{ applicant.phone }}
+      </ul>
+    </div>
+  </div>
+  <div class="uk-card uk-card-small uk-card-default uk-margin-left">
+    <div class="uk-card-header">電子郵件信箱</div>
+    <div class="uk-card-body">
+      <ul class="uk-list">
+        {{ applicant.email }}
+      </ul>
+    </div>
+  </div>
+</div>
+
+<ul uk-tab="animation: uk-animation-scale-up">
+  <li><a href="#">借用中設備</a></li>
+  <li><a href="#">借用紀錄</a></li>
+</ul>
+
+<div class="uk-switcher">
+  <div>
+    <table class="uk-table uk-table-divider uk-table-striped uk-table-hover uk-table-small">
+      <thead class="uk-light uk-background-secondary">
+        <tr>
+          <th>設備編號</th>
+          <th>借出日期</th>
+          <th></th>
+          <th>更新時間</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for log in inuse_list %}
+        <tr>
+          <td>
+            <a href="{% url 'equip_view' log.equip_id %}">{{ log.equip.name }}</a>
+          </td>
+          <td>{{ log.date_apply|date:"Y-m-d" }}</td>
+          <td>
+            <a href="{% url 'applicant_log_edit' applicant.id log.id %}" class="uk-icon-button uk-icon-danger" uk-icon="file-edit" title="編輯"></a>
+            <a href="{% url 'applicant_log_delete' applicant.id log.id %}" class="uk-icon-button uk-icon-danger" uk-icon="trash" title="刪除"></a>
+            <a href="{% url 'applicant_log_return' applicant.id log.id %}" class="uk-icon-button" uk-icon="reply" title="快速歸還"></a>            
+          </td>
+          <td class="uk-comment-meta">{{ log.author }}@{{ log.modified|date:"Y-m-d H:i" }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <div>共 {{ inuse_list.count }} 筆紀錄</div>
+  </div>
+  <div>
+    <table class="uk-table uk-table-divider uk-table-striped uk-table-hover uk-table-small">
+      <thead class="uk-light uk-background-secondary">
+        <tr>
+          <th>設備編號</th>
+          <th>借出日期</th>
+          <th>歸還日期</th>
+          <th></th>
+          <th>更新時間</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for log in applicant.log_set.all %}
+        <tr>
+          <td>
+            <a href="{% url 'equip_view' log.equip_id %}">{{ log.equip.name }}</a>
+          </td>
+          <td>{{ log.date_apply|date:"Y-m-d" }}</td>
+          <td>{{ log.date_return|date:"Y-m-d" }}</td>
+          <td>
+            <a href="{% url 'applicant_log_edit' applicant.id log.id %}" class="uk-icon-button uk-icon-danger" uk-icon="file-edit" title="編輯"></a>
+            <a href="{% url 'applicant_log_delete' applicant.id log.id %}" class="uk-icon-button uk-icon-danger" uk-icon="trash" title="刪除"></a>
+            {% if not log.date_return %}
+              <a href="{% url 'applicant_log_return' applicant.id log.id %}" class="uk-icon-button" uk-icon="reply" title="快速歸還"></a>            
+            {% endif %}
+          </td>
+          <td class="uk-comment-meta">{{ log.author }}@{{ log.modified|date:"Y-m-d H:i" }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <div>共 {{ applicant.log_set.count }} 筆紀錄</div>
+  </div>
+</div>
+{% endblock %}

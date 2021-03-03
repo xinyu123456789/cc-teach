@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block main %}
+<div class="uk-card uk-card-default uk-card-body">
+    <div class="uk-card-title">使用者登入</div>
+    <form action="" class="uk-form-stacked" method="post">
+      {% csrf_token %}
+      <ul class="uk-child-width-1-2@s uk-margin" uk-grid>
+        {{ form.as_ul }}
+      </ul>
+      <input type="submit" class="uk-button uk-button-primary" value="登入">
+    </form>
+</div>
+<script>
+  document.querySelectorAll('form label').forEach(function(item) {
+    item.classList.add('uk-form-label');
+  });
+  document.querySelectorAll('form input').forEach(function(item) {
+    item.classList.add('uk-input');
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,104 @@
+{% extends "em/base.html" %}
+
+{% block content %}
+<div>
+  <h1>借用登記</h1>
+  {% if log_title %}
+    <p>{{ log_title }}</p>
+  {% endif %}
+</div>
+<form action="" class="uk-form-stacked" method="post">
+  {% csrf_token %}
+  <table class="uk-table uk-table-sm">
+  {{ form.as_table }}
+  </table>
+  <input type="submit" class="uk-button uk-button-primary" value="送出">
+  <input type="button" class="uk-button uk-button-danger" value="返回" onclick="javascript:window.history.back();">
+</form>
+{% if form.equip %}
+<div id="equip-picker" class="uk-modal-container uk-active" uk-modal>
+  <div class="uk-modal-dialog uk-modal-body">
+    <div uk-filter="target: .js-equip-filter">
+      <div class="uk-grid-small uk-grid-divider" uk-grid>
+        <div>
+          <ul class="uk-subnav uk-subnav-pill">
+            {% for model in model_list %}
+            <li uk-filter-control="filter: [data-model='{{ model.id }}']; group: equip-model"{% if forloop.counter0 == 0 %} class="uk-active"{% endif %}><a href="#">{{ model.name }}</a></li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+      <ul class="js-equip-filter uk-grid-small" uk-grid>
+        {% for equip in equip_list %}
+        <li data-model="{{ equip.model_id }}">
+          <a class="equip-option uk-button uk-button-default uk-button-small" data-eid="{{ equip.id }}">{{ equip.name }}</a>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+{% endif %}
+{% if form.user %}
+<div id="user-picker" class="uk-modal-container uk-active" uk-modal>
+  <div class="uk-modal-dialog uk-modal-body">
+    <div uk-filter="target: .js-user-filter">
+      <div class="uk-grid-small uk-grid-divider uk-child-width-auto" uk-grid>
+        <div>
+          <ul class="uk-subnav uk-subnav-pill">
+            <li uk-filter-control="filter: [data-role='0']; group: applicant-role" class="uk-active"><a href="#">行政人員</a></li>
+            <li uk-filter-control="filter: [data-role='1']; group: applicant-role"><a href="#">高中部教師</a></li>
+            <li uk-filter-control="filter: [data-role='2']; group: applicant-role"><a href="#">國中部教師</a></li>
+          </ul>
+        </div>
+        <div>
+          <ul class="uk-subnav uk-subnav-pill">
+            <li uk-filter-control="filter: [data-status='0']; group: applicant-status" class="uk-active"><a href="#">在職</a></li>
+            <li uk-filter-control="filter: [data-status='1']; group: applicant-status"><a href="#">已離職</a></li>
+            <li uk-filter-control="filter: [data-status='2']; group: applicant-status"><a href="#">留職停薪</a></li>
+          </ul>
+        </div>
+      </div>
+      <ul class="js-user-filter uk-grid-small" uk-grid>
+        {% for applicant in applicant_list %}
+        <li data-role="{{ applicant.role }}" data-status="{{ applicant.status }}">
+          <a class="user-option uk-button uk-button-{% if applicant.status %}secondary{% else %}default{% endif %} uk-button-small" data-uid="{{ applicant.id }}">{{ applicant.name }}</a>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+{% endif %}
+<script>
+  {% if object.user %}document.querySelector('#toggle_user').innerHTML = '{{ object.user.name }}';{% endif %}
+  {% if object.equip %}document.querySelector('#toggle_equip').innerHTML = '{{ object.equip.name }}';{% endif %}
+  document.querySelectorAll('form label').forEach(function(item) {
+    item.classList.add('uk-form-label');
+  });
+  document.querySelectorAll('form input, form select, form textarea').forEach(function(item) {
+    if (item.type != "submit" && item.type != "button")
+      item.classList.add('uk-'+item.tagName.toLowerCase());
+  });
+  document.querySelectorAll('form input[name *= "date_"]').forEach(function(item) {
+    if (item.attributes['value'])
+      item.value = item.attributes['value'].value.replaceAll('/', '-');
+    item.type = 'date';
+  })
+
+  document.querySelectorAll('#user-picker .user-option').forEach(function(item) {
+    item.addEventListener('click', function(e) {
+      document.querySelector('#id_user').value = this.dataset["uid"];
+      document.querySelector('#toggle_user').innerHTML = this.text;
+      UIkit.modal('#user-picker').hide();
+    });
+  });
+  document.querySelectorAll('#equip-picker .equip-option').forEach(function(item) {
+    item.addEventListener('click', function(e) {
+      document.querySelector('#id_equip').value = this.dataset["eid"];
+      document.querySelector('#toggle_equip').innerHTML = this.text;
+      UIkit.modal('#equip-picker').hide();
+    });
+  });
+</script>
+{% endblock %}

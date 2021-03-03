@@ -1,0 +1,29 @@
+{% extends "em/base.html" %}
+
+{% block content %}
+<form action="" class="uk-form-stacked" method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  <table class="uk-table uk-table-sm">
+  {{ form.as_table }}
+  </table>
+  <input type="submit" class="uk-button uk-button-primary" value="送出">
+  <input type="button" class="uk-button uk-button-danger" value="返回" onclick="javascript:window.history.back();">
+</form>
+<script>
+  document.querySelectorAll('form label').forEach(function(item) {
+    item.classList.add('uk-form-label');
+  });
+  document.querySelectorAll('form input, form select, form textarea').forEach(function(item) {
+    if (item.type == "checkbox")
+      item.classList.add('uk-checkbox');
+    else if (item.type != "submit" && item.type != "button" && item.type != "checkbox")
+      item.classList.add('uk-'+item.tagName.toLowerCase());
+    console.log(item);
+  });
+  document.querySelectorAll('form input[name *= "date_"]').forEach(function(item) {
+    if (item.attributes['value'])
+      item.value = item.attributes['value'].value.replaceAll('/', '-');
+    item.type = 'date';
+  })
+</script>
+{% endblock %}
