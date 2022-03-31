@@ -1,0 +1,28 @@
+{% extends "em/base.html" %}
+
+{% block content %}
+<h1>借用紀錄清單</h1>
+
+<table class="uk-table">
+  <thead>
+    <tr>
+      <th>設備編號</th>
+      <th>型號</th>
+      <th>借用人</th>
+      <th>借出日期</th>
+      <th>歸還日期</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for log in log_list %}
+    <tr>
+      <td>{{ log.equip.name }}</td>
+      <td>{{ log.equip.model.name }}</td>
+      <td>{{ log.user.name }}</td>
+      <td>{{ log.date_apply }}</td>
+      <td>{{ log.date_return|default:"" }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "em/base.html" %}
+
+{% block content %}
+<h1>設備清單</h1>
+
+<table class="uk-table">
+  <thead>
+    <tr>
+      <th>設備編號</th>
+      <th>型號</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for equip in equip_list %}
+    <tr>
+      <td>{{ equip.name }}</td>
+      <td>{{ equip.model.name }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
